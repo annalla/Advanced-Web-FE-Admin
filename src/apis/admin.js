@@ -12,3 +12,14 @@ export const GetAdminList = async () => {
             return error
         })
 }
+export const GetAdminById = async (id) => {
+    const header={ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },}
+    return axios
+        .get(API_URL + "admin/"+id,header)
+        .then(function (response) {
+            return response.data
+        })
+        .catch(function (error) {
+            return error
+        })
+}

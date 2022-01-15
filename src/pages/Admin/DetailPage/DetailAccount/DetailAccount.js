@@ -7,13 +7,16 @@ import CardMedia from "@mui/material/CardMedia";
 import Card from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton";
-import { indigo } from '@mui/material/colors';
+import { SRC_IMG } from "../../../../constants/const";
+import { convertUnixToDateFormat } from "../../../../utils/util";
+// import MenuItem from "@mui/material/MenuItem";
+// import FormControl from "@mui/material/FormControl";
+// import Select from "@mui/material/Select";
+// import DeleteIcon from "@mui/icons-material/Delete";
+// import EditIcon from "@mui/icons-material/Edit";
+// import IconButton from "@mui/material/IconButton";
+// import { indigo } from '@mui/material/colors';
+import { useState } from "react";
 
 const theme = createTheme({
   palette: {
@@ -23,7 +26,17 @@ const theme = createTheme({
   },
 });
 
-export default function DetailAccount() {
+export default function DetailAccount({ data }) {
+  const [account, setAccount] = useState(data);
+  const [date,setDate]=useState(new Date());
+  React.useEffect(() => {
+    console.log(data);
+    if(data.createdAt!==undefined){
+      console.log(new Date(data.createdAt));
+      setDate((new Date(convertUnixToDateFormat(data.createdAt))).toISOString().slice(0,16));
+    }
+    setAccount(data);
+  }, [data]);
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -39,7 +52,9 @@ export default function DetailAccount() {
             <CardMedia
               component="img"
               height="160"
-              image="url(https://source.unsplash.com/random)"
+              image={
+                account.avatar === "" ? SRC_IMG.DEFAULT_AVATAR : account.avatar
+              }
               alt="green iguana"
             />
           </Card>
@@ -51,7 +66,7 @@ export default function DetailAccount() {
               <TextField
                 sx={{ width: "75%" }}
                 multiline={true}
-                defaultValue=""
+                defaultValue={account.username}
                 variant="standard"
                 disabled
               />
@@ -61,20 +76,20 @@ export default function DetailAccount() {
               <TextField
                 sx={{ width: "75%" }}
                 multiline={true}
-                defaultValue=""
+                defaultValue={account.name}
                 variant="standard"
                 disabled
               />
             </Box>
-            <Box sx={{ display: "flex", width: "100%" }}>
+            {/* <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>Code</Typography>
-              {/* <TextField
+              <TextField
                 sx={{ width: "75%" }}
                 defaultValue=""
                 variant="standard"
                 disabled
               /> */}
-              <TextField
+            {/* <TextField
                 sx={{ width: "68%" }}
                 defaultValue=""
                 variant="standard"
@@ -86,18 +101,19 @@ export default function DetailAccount() {
               </IconButton>
               <IconButton aria-label="edit" size="small">
                 <EditIcon fontSize="small" sx={{color:indigo[900]}} />
-              </IconButton>
-            </Box>{" "}
+              </IconButton> */}
+            {/* </Box>{" "} */}
             <Box sx={{ display: "flex", width: "100%" }}>
-              <Typography sx={{ p: 0.5, width: "20%" }}>Birthday</Typography>
+              <Typography sx={{ p: 0.5, width: "20%" }}>Created At</Typography>
               <TextField
-                type="date"
+                type="datetime-local"
                 sx={{ width: "75%" }}
                 variant="standard"
+                value={date}
                 disabled
               />
             </Box>
-            <Box sx={{ display: "flex", width: "100%" }}>
+            {/* <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>Gender</Typography>
               <FormControl
                 variant="standard"
@@ -111,12 +127,13 @@ export default function DetailAccount() {
                   <MenuItem value={2}>Female</MenuItem>
                 </Select>
               </FormControl>
-            </Box>
+            </Box> */}
             <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>Phone</Typography>
               <TextField
                 sx={{ width: "75%" }}
-                defaultValue=""
+                multiline={true}
+                defaultValue={account.phone}
                 variant="standard"
                 disabled
               />
@@ -125,12 +142,13 @@ export default function DetailAccount() {
               <Typography sx={{ p: 0.5, width: "20%" }}>Email</Typography>
               <TextField
                 sx={{ width: "75%" }}
-                defaultValue=""
+                multiline={true}
+                defaultValue={account.email}
                 variant="standard"
                 disabled
               />
             </Box>
-            <Box sx={{ display: "flex", width: "100%" }}>
+            {/* <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>
                 Identity Card
               </Typography>
@@ -140,7 +158,7 @@ export default function DetailAccount() {
                 variant="standard"
                 disabled
               />
-            </Box>
+            </Box> */}
           </Stack>
         </Paper>
       </Box>

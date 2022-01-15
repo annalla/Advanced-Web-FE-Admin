@@ -1,6 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-import { alpha } from "@mui/material/styles";
+// import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,7 +14,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+// import Tooltip from "@mui/material/Tooltip";
 import { visuallyHidden } from "@mui/utils";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
@@ -24,6 +24,9 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 import AddForm from "../AddForm/AddForm";
+import Avatar from "@mui/material/Avatar";
+import { convertUnixToTime } from "../../../utils/util";
+import {PATH} from "../../../constants/path"
 
 const BootstrapButton = styled(Button)({
   boxShadow: 'none',
@@ -68,31 +71,6 @@ const theme = createTheme({
       },
   },
 });
-// function createData(name, calories, fat, carbs, protein) {
-//   return {
-//     name,
-//     calories,
-//     fat,
-//     carbs,
-//     protein,
-//   };
-// }
-
-// const originalRows = [
-//   createData("Cupcake", 305, 3.7, 67, 4.3),
-//   createData("Donut", 452, 25.0, 51, 4.9),
-//   createData("Eclair", 6, 16.0, 24, 6.0),
-//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-//   createData("Gingerbread", 356, 16.0, 49, 3.9),
-//   createData("Honeycomb", 408, 3.2, 87, 6.5),
-//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-//   createData("Jelly Bean", 375, 0.0, 94, 0.0),
-//   createData("KitKat", 518, 26.0, 65, 7.0),
-//   createData("Lollipop", 392, 0.2, 98, 0.0),
-//   createData("Marshmallow", 318, 0, 81, 2.0),
-//   createData("Nougat", 360, 19.0, 9, 37.0),
-//   createData("Oreo", 437, 18.0, 63, 4.0),
-// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -113,7 +91,6 @@ function getComparator(order, orderBy) {
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 function stableSort(array, comparator) {
-  console.log(array);
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -133,8 +110,8 @@ const headCells = [
     label: "Username",
   },
   {
-    id: "fullName",
-    // numeric: true,
+    id: "name",
+    numeric: false,
     disablePadding: false,
     label: "Full Name",
   },
@@ -145,11 +122,12 @@ const headCells = [
     label: "Email",
   },
   {
-    id: "createdTime",
-    // numeric: true,
+    id: "createdAt",
+    numeric: false,
     disablePadding: false,
     label: "Created At",
-  }
+  },
+
 ];
 
 function EnhancedTableHead(props) {
@@ -234,6 +212,7 @@ export default function AdminTable({data}) {
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState(data);
   const [isOpenForm,setIsOpenForm]=React.useState(false);
+  const path=PATH.ADMIN_DETAIL.split(":id")[0];
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -249,7 +228,6 @@ export default function AdminTable({data}) {
     setPage(newPage);
   };
   const handleClickAddAdmin = () => {
-    console.log("dm")
     setIsOpenForm(true);
   };
   const handleChangeRowsPerPage = (event) => {
@@ -267,7 +245,7 @@ export default function AdminTable({data}) {
 
     const filteredRows = data.filter((row) => {
   
-      return row.name.toLowerCase().includes(searchedVal.toLowerCase());
+      return (row.name.toLowerCase().includes(searchedVal.toLowerCase())||row.username.toLowerCase().includes(searchedVal.toLowerCase())||row.email.toLowerCase().includes(searchedVal.toLowerCase()));
     });
     setRows(filteredRows);
   };
@@ -327,11 +305,18 @@ export default function AdminTable({data}) {
                           scope="row"
                           padding="none"
                         >
-                         <Link to="/"  style={{ textDecoration: 'none' }}><Typography>{row.username}</Typography></Link> 
+                         <Link to={path+row.id}  style={{ textDecoration: 'none' }}>
+                           <Box sx={{display:"flex"}}>
+                           <Avatar alt={row.username} src={rows.avatarUrl}/>
+                           <Typography sx={{py:1,ml:2}}>{row.username}</Typography>
+                           </Box>
+                           </Link> 
                         </TableCell>
-                        <TableCell align="right">{row.name}</TableCell>
-                        <TableCell align="right">{row.email}</TableCell>
-                        <TableCell align="right">{row.createdAt}</TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
+                        <TableCell align="left">
+                          {convertUnixToTime(row.createdAt)}
+                          </TableCell>
                         <TableCell align="left" sx={{display:"flex"}}>
                            <IconButton aria-label="see">
                              <VisibilityIcon/>
