@@ -1,5 +1,7 @@
 export const ERROR_CODE = {
 
+    //general
+    BAD_REQUEST:"Wrong user",
     // Login
     WRONG_PASSWORD: "Wrong password!",
     EMPTY_PASSWORD: "Empty password!",

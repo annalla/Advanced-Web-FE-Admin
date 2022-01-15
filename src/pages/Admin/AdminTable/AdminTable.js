@@ -23,7 +23,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { Link } from "react-router-dom";
-import AddForm from "../Admin/AddForm";
+import AddForm from "../AddForm/AddForm";
 
 const BootstrapButton = styled(Button)({
   boxShadow: 'none',
@@ -68,31 +68,31 @@ const theme = createTheme({
       },
   },
 });
-function createData(name, calories, fat, carbs, protein) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-  };
-}
+// function createData(name, calories, fat, carbs, protein) {
+//   return {
+//     name,
+//     calories,
+//     fat,
+//     carbs,
+//     protein,
+//   };
+// }
 
-const originalRows = [
-  createData("Cupcake", 305, 3.7, 67, 4.3),
-  createData("Donut", 452, 25.0, 51, 4.9),
-  createData("Eclair", 6, 16.0, 24, 6.0),
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  createData("Gingerbread", 356, 16.0, 49, 3.9),
-  createData("Honeycomb", 408, 3.2, 87, 6.5),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  createData("Jelly Bean", 375, 0.0, 94, 0.0),
-  createData("KitKat", 518, 26.0, 65, 7.0),
-  createData("Lollipop", 392, 0.2, 98, 0.0),
-  createData("Marshmallow", 318, 0, 81, 2.0),
-  createData("Nougat", 360, 19.0, 9, 37.0),
-  createData("Oreo", 437, 18.0, 63, 4.0),
-];
+// const originalRows = [
+//   createData("Cupcake", 305, 3.7, 67, 4.3),
+//   createData("Donut", 452, 25.0, 51, 4.9),
+//   createData("Eclair", 6, 16.0, 24, 6.0),
+//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
+//   createData("Gingerbread", 356, 16.0, 49, 3.9),
+//   createData("Honeycomb", 408, 3.2, 87, 6.5),
+//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
+//   createData("Jelly Bean", 375, 0.0, 94, 0.0),
+//   createData("KitKat", 518, 26.0, 65, 7.0),
+//   createData("Lollipop", 392, 0.2, 98, 0.0),
+//   createData("Marshmallow", 318, 0, 81, 2.0),
+//   createData("Nougat", 360, 19.0, 9, 37.0),
+//   createData("Oreo", 437, 18.0, 63, 4.0),
+// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -113,6 +113,7 @@ function getComparator(order, orderBy) {
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 function stableSort(array, comparator) {
+  console.log(array);
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -126,35 +127,29 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: "name",
+    id: "username",
     numeric: false,
     disablePadding: true,
-    label: "Dessert (100g serving)",
+    label: "Username",
   },
   {
-    id: "calories",
-    numeric: true,
+    id: "fullName",
+    // numeric: true,
     disablePadding: false,
-    label: "Calories",
+    label: "Full Name",
   },
   {
-    id: "fat",
-    numeric: true,
+    id: "email",
+    numeric: false,
     disablePadding: false,
-    label: "Fat(g)",
+    label: "Email",
   },
   {
-    id: "carbs",
-    numeric: true,
+    id: "createdTime",
+    // numeric: true,
     disablePadding: false,
-    label: "Carbs (g)",
-  },
-  {
-    id: "protein",
-    numeric: true,
-    disablePadding: false,
-    label: "Protein (g)",
-  },
+    label: "Created At",
+  }
 ];
 
 function EnhancedTableHead(props) {
@@ -200,9 +195,9 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
+  // numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
+  // onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
@@ -224,7 +219,7 @@ const EnhancedTableToolbar = () => {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          Admin
         </Typography>
 
     </Toolbar>
@@ -232,12 +227,12 @@ const EnhancedTableToolbar = () => {
 };
 
 
-export default function AdminTable() {
+export default function AdminTable({data}) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [rows, setRows] = React.useState(originalRows);
+  const [rows, setRows] = React.useState(data);
   const [isOpenForm,setIsOpenForm]=React.useState(false);
 
   const handleRequestSort = (event, property) => {
@@ -246,7 +241,9 @@ export default function AdminTable() {
     setOrderBy(property);
   };
 
- 
+ React.useEffect(()=>{
+   setRows(data);
+ },[data])
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -268,7 +265,7 @@ export default function AdminTable() {
       const requestSearch = (e) => {
     const searchedVal = e.target.value;
 
-    const filteredRows = originalRows.filter((row) => {
+    const filteredRows = data.filter((row) => {
   
       return row.name.toLowerCase().includes(searchedVal.toLowerCase());
     });
@@ -330,12 +327,11 @@ export default function AdminTable() {
                           scope="row"
                           padding="none"
                         >
-                         <Link to="/"  style={{ textDecoration: 'none' }}><Typography>{row.name}</Typography></Link> 
+                         <Link to="/"  style={{ textDecoration: 'none' }}><Typography>{row.username}</Typography></Link> 
                         </TableCell>
-                        <TableCell align="right">{row.calories}</TableCell>
-                        <TableCell align="right">{row.fat}</TableCell>
-                        <TableCell align="right">{row.carbs}</TableCell>
-                        <TableCell align="right">{row.protein}</TableCell>
+                        <TableCell align="right">{row.name}</TableCell>
+                        <TableCell align="right">{row.email}</TableCell>
+                        <TableCell align="right">{row.createdAt}</TableCell>
                         <TableCell align="left" sx={{display:"flex"}}>
                            <IconButton aria-label="see">
                              <VisibilityIcon/>

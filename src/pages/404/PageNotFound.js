@@ -3,7 +3,7 @@ import { Container } from "@mui/material";
 import Box from "@mui/material/Box";
 import { Fragment } from "react";
 import { CardMedia } from "@mui/material";
-// import { SRC_IMG } from "../../constants/const";
+import { SRC_IMG } from "../../constants/const";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 import {PATH} from "../../constants/path";
@@ -11,7 +11,7 @@ import {PATH} from "../../constants/path";
 const PageNotFound = () => {
   const navigate = useNavigate();
   const handleGoHome = () => {
-    navigate(PATH.HOME);
+    navigate(PATH.ADMIN_MANAGE);
   };
   return (
     <Fragment>
@@ -29,7 +29,7 @@ const PageNotFound = () => {
           <CardMedia
             component="img"
             height="70%"
-            image="sh.jpg"
+            image={SRC_IMG.PAGE_NOT_FOUND}
             alt="cover-image"
             sx={{ borderRadius: 2 }}
           />
