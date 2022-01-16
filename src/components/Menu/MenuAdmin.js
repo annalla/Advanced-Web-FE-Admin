@@ -12,7 +12,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import ClassIcon from '@mui/icons-material/Class';
-
+import { useLocation, useNavigate } from "react-router-dom";
+import {PATH} from '../../constants/path';
 
 const theme = createTheme({
   palette: {
@@ -46,7 +47,13 @@ const useStyles = makeStyles({
 });
 
 export function MenuAdmin({isAdmin,isUser,isClass}) {
+  const navigate=useNavigate();
+  const location=useLocation();
+  const [path,setPath]=React.useState(location.pathname);
   const classes = useStyles();
+  React.useEffect(()=>{
+    navigate(path);
+  },[path])
   return (
     <ThemeProvider theme={theme}>
     <Drawer
@@ -67,7 +74,7 @@ export function MenuAdmin({isAdmin,isUser,isClass}) {
       </Toolbar>
       <Divider />
       <List>
-          <ListItem button key="admin" selected={isAdmin}>
+          <ListItem button key="admin" selected={isAdmin} onClick={()=>setPath(PATH.ADMIN_MANAGE)}>
             <ListItemIcon>
               <AdminPanelSettingsIcon color="primary"/>
             </ListItemIcon>
@@ -75,7 +82,7 @@ export function MenuAdmin({isAdmin,isUser,isClass}) {
             <Typography color="primary.main" fontWeight="550">Admin Accounts</Typography>
               </ListItemText>
           </ListItem>
-          <ListItem button key="account" selected={isUser}>
+          <ListItem button key="account" selected={isUser} onClick={()=>setPath(PATH.USER_MANAGE)}>
             <ListItemIcon>
               <PersonIcon color="primary"/>
             </ListItemIcon>
@@ -84,7 +91,7 @@ export function MenuAdmin({isAdmin,isUser,isClass}) {
             </ListItemText>
 
           </ListItem>
-          <ListItem button key="class" selected={isClass}>
+          <ListItem button key="class" selected={isClass} onClick={()=>setPath(PATH.CLASS_MANAGE)}>
             <ListItemIcon>
               <ClassIcon color="primary"/>
             </ListItemIcon>

@@ -15,7 +15,7 @@ export default function AdminPage() {
   const [data,setData]= React.useState([]);
 
   React.useEffect(() => {
-    GetAdminList()
+    GetAdminList("")
       .then(async (res) => {
         if (res.status === 1) {
           setData(res.data);

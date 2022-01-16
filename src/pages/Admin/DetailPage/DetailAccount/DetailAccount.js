@@ -9,6 +9,8 @@ import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import { SRC_IMG } from "../../../../constants/const";
 import { convertUnixToDateFormat } from "../../../../utils/util";
+import { blue, red } from "@mui/material/colors";
+
 // import MenuItem from "@mui/material/MenuItem";
 // import FormControl from "@mui/material/FormControl";
 // import Select from "@mui/material/Select";
@@ -28,12 +30,14 @@ const theme = createTheme({
 
 export default function DetailAccount({ data }) {
   const [account, setAccount] = useState(data);
-  const [date,setDate]=useState(new Date());
+  const [date, setDate] = useState(new Date());
   React.useEffect(() => {
-    console.log(data);
-    if(data.createdAt!==undefined){
-      console.log(new Date(data.createdAt));
-      setDate((new Date(convertUnixToDateFormat(data.createdAt))).toISOString().slice(0,16));
+    if (data.createdAt !== undefined) {
+      setDate(
+        new Date(convertUnixToDateFormat(data.createdAt))
+          .toISOString()
+          .slice(0, 16)
+      );
     }
     setAccount(data);
   }, [data]);
@@ -138,7 +142,7 @@ export default function DetailAccount({ data }) {
                 disabled
               />
             </Box>
-            <Box sx={{ display: "flex", width: "100%" }}>
+            <Box sx={{ display: "flex", width: "100%", position: "relative" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>Email</Typography>
               <TextField
                 sx={{ width: "75%" }}
@@ -147,6 +151,43 @@ export default function DetailAccount({ data }) {
                 variant="standard"
                 disabled
               />
+              {account.isEmailVerified === true ? (
+                <Box
+                  sx={{
+                    width: 100,
+                    height: 30,
+                    backgroundColor: red[50],
+                    position: "absolute",
+                    right: 45,
+                    top: 0,
+                    borderRadius: 20,
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Typography color={red[900]} sx={{ mt: 0.5 }}>
+                    Xác thực
+                  </Typography>
+                </Box>
+              ) : (
+                <Box
+                  sx={{
+                    width: 150,
+                    height: 30,
+                    backgroundColor: blue[50],
+                    position: "absolute",
+                    right: 45,
+                    top: 0,
+                    borderRadius: 20,
+                    justifyContent: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Typography color={blue[900]} sx={{ mt: 0.5 }}>
+                    Chưa xác thực
+                  </Typography>
+                </Box>
+              )}
             </Box>
             {/* <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>

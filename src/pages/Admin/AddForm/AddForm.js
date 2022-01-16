@@ -8,12 +8,11 @@ import CardContent from "@mui/material/CardContent";
 import { TextField } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useForm } from "react-hook-form";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
 import Stack from "@mui/material/Stack";
-
+import { validateEmail, checkPhone } from "../../../utils/util";
+import { FormHelperText } from "@mui/material";
+import { CreateAdmin } from "../../../apis/admin";
+import { ERROR_CODE } from "../../../constants/errorCode";
 // const Item = styled(Paper)(({ theme }) => ({
 //   ...theme.typography.body2,
 //   padding: theme.spacing(1),
@@ -33,9 +32,36 @@ const style = {
   p: 0,
 };
 
-export default function AddForm({ closeForm }) {
+export default function AddForm({ AddAdmin, closeForm }) {
   const [open, setOpen] = React.useState(true);
-  const [birthday, setBirthday] = React.useState("1989-01-01");
+  const [password, setPassword] = React.useState("");
+  const [uploadFile, setUploadFile] = useState();
+  const [preview, setPreview] = useState();
+  const [error,setError]=useState(null)
+
+  const handleUploadFile = (e) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      setUploadFile(undefined);
+      return;
+    }
+
+    // I've kept this example simple by using the first image instead of multiple
+    setUploadFile(e.target.files[0]);
+  };
+  useEffect(() => {
+    if (!uploadFile) {
+      setPreview(undefined);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(uploadFile);
+    setPreview(objectUrl);
+
+    // free memory when ever this component is unmounted
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [uploadFile]);
   const {
     register,
     handleSubmit,
@@ -47,14 +73,34 @@ export default function AddForm({ closeForm }) {
     closeForm();
   };
 
-  const onSubmit = async (data) => {};
+  const onSubmit = async (data) => {
+    const dataArray = new FormData();
+    dataArray.append("username", data.username);
+    dataArray.append("password", data.password);
+    dataArray.append("retypePassword", data.retypePassword);
+    dataArray.append("name", data.name);
+    dataArray.append("email", data.email);
+    dataArray.append("phone", data.phone);
+    dataArray.append("avatar", uploadFile);
+    console.log(dataArray);
+    CreateAdmin(dataArray)
+    .then(async(res)=>{
+      if(res.status===1){
+        AddAdmin(res.data);
+        console.log(res.data);
+        closeForm();
+      }
+      else{
+        setError(ERROR_CODE[res.code])
+      }
+    }).catch((error)=>setError("Register failed"))
+
+  };
+
   const { ref, ...inputProps } = register("username", {
     required: "Username is required",
   });
 
-  const handleBirthday = (event) => {
-    setBirthday(event.target.value);
-  };
   return (
     <div>
       <Modal
@@ -79,8 +125,8 @@ export default function AddForm({ closeForm }) {
                     <Stack spacing={1.5}>
                       <TextField
                         name="username"
-                        error={!!errors.username}
                         label="Username"
+                        error={!!errors.username}
                         helperText={errors?.username?.message}
                         inputRef={ref}
                         {...inputProps}
@@ -88,106 +134,111 @@ export default function AddForm({ closeForm }) {
                         required
                       />
                       <TextField
-                        name="code"
-                        label="Code"
-                        inputRef={register("code")}
-                        {...register("code")}
+                        name="name"
+                        label="Full Name"
+                        inputRef={register("name")}
+                        {...register("name")}
                         fullWidth
                         required
                       />
                       <TextField
-                        name="fullname"
-                        label="Full Name"
-                        inputRef={register("fullname")}
-                        {...register("fullname")}
-                        fullWidth
-                        required
-                      />
-                       <TextField
                         name="password"
                         label="Password"
+                        type="password"
+                        error={!!errors.password}
+                        helperText={errors?.password?.message}
                         inputRef={register("password")}
-                        {...register("password")}
+                        {...register("password", {
+                          validate: {
+                            check: (v) =>
+                              v.length >= 4 || "Length of Password >= 4",
+                          },
+                        })}
                         fullWidth
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                       />
-                       <TextField
+                      <TextField
+                        type="password"
                         name="retypePassword"
                         label="Retype Password"
+                        error={!!errors.retypePassword}
+                        helperText={errors?.retypePassword?.message}
                         inputRef={register("retypePassword")}
-                        {...register("retypePassword")}
+                        {...register("retypePassword", {
+                          validate: {
+                            check: (v) =>
+                              v === password ||
+                              "Password and RetypePassword are not matched",
+                          },
+                        })}
                         fullWidth
                         required
                       />
                       <TextField
                         name="email"
                         label="Email"
+                        error={!!errors.email}
+                        helperText={errors?.email?.message}
+                        inputRef={register("email")}
+                        {...register("email", {
+                          validate: {
+                            check: (v) =>
+                              validateEmail(v) === true || "Email is not Valid",
+                          },
+                        })}
+                        fullWidth
+                        required
+                      />
+                      {/* <TextField
+                        name="email"
+                        label="Email"
+                        // error={validateEmail}
                         inputRef={register("email")}
                         {...register("email")}
                         fullWidth
                         required
-                      />
+                      /> */}
                       <TextField
                         name="phone"
                         label="Phone"
+                        error={!!errors.phone}
+                        helperText={errors?.phone?.message}
                         inputRef={register("phone")}
-                        {...register("phone")}
+                        {...register("phone", {
+                          validate: {
+                            check: (v) =>
+                              checkPhone(v) === true || "Phone is not Valid",
+                          },
+                        })}
                         fullWidth
-                        required
                       />
                     </Stack>
                   </Grid>
                   <Grid item xs={6}>
                     <Stack spacing={1.5}>
-                    <Grid item xs={12} sm={6}>
-                      <Button
-                        variant="contained"
-                        component="label"
-                        id="avatarImage"
-                      >
-                        {" "}
-                        Avatar{" "}
-                        <input
-                          type="file"
-                          hidden
-                          // onChange={handleUploadFile}
-                        />{" "}
-                      </Button>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      {/* {uploadFile && <img alt="avatarImage" id="previewImage" src={preview} width="150" height="150"/>} */}
-                    </Grid>
-                    <TextField
-                      fullWidth
-                      id="birthday"
-                      type="date"
-                      label="Birthday"
-                      name="birthday"
-                      autoComplete="birthday"
-                      value={birthday}
-                      onChange={handleBirthday}
-                    />
-                    <FormControl variant="standard" fullWidth>
-                      <InputLabel id="genderInputLabel">Gender</InputLabel>
-                      <Select labelId="genderId" id="gender" label="Gender">
-                        <MenuItem value={0}>
-                          None
-                        </MenuItem>
-                        <MenuItem value={1}>Male</MenuItem>
-                        <MenuItem value={2}>Female</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <TextField
-                        name="identityCard"
-                        label="Identity Card"
-                        inputRef={register("identityCard")}
-                        {...register("identityCard")}
-                        fullWidth
-                        
-                      />
-                    <Grid container justifyContent="center">
-                      {/* <FormHelperText error>{errorResponse}</FormHelperText> */}
-                    </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Button
+                          variant="contained"
+                          component="label"
+                          id="avatarImage"
+                        >
+                          {" "}
+                          Avatar{" "}
+                          <input
+                            type="file"
+                            hidden
+                            onChange={handleUploadFile}
+                          />{" "}
+                        </Button>
+                         <Grid item xs={12} sm={6}>
+                        {uploadFile && <img alt="avatarImage" id="previewImage" src={preview} width="150" height="150"/>}
+                      </Grid>
+                      </Grid>
+                     {error?<Grid container justifyContent="center">
+                        <FormHelperText error>{error}</FormHelperText>
+                      </Grid>:""}
+                      
                     </Stack>
                   </Grid>
                 </Grid>

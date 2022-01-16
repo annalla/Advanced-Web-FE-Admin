@@ -18,57 +18,59 @@ import IconButton from "@mui/material/IconButton";
 import { visuallyHidden } from "@mui/utils";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import AddForm from "../AddForm/AddForm";
 import Avatar from "@mui/material/Avatar";
 import { convertUnixToTime } from "../../../utils/util";
-import {PATH} from "../../../constants/path"
+import { PATH } from "../../../constants/path";
+import { GetAdminList } from "../../../apis/admin";
+import { useNavigate } from "react-router-dom";
 
 const BootstrapButton = styled(Button)({
-  boxShadow: 'none',
-  textTransform: 'none',
+  boxShadow: "none",
+  textTransform: "none",
   fontSize: 16,
-  padding: '6px 12px',
-  border: '1px solid',
+  padding: "6px 12px",
+  border: "1px solid",
   lineHeight: 1.5,
-  backgroundColor: '#0063cc',
-  borderColor: '#0063cc',
+  backgroundColor: "#0063cc",
+  borderColor: "#0063cc",
   fontFamily: [
-    '-apple-system',
-    'BlinkMacSystemFont',
+    "-apple-system",
+    "BlinkMacSystemFont",
     '"Segoe UI"',
-    'Roboto',
+    "Roboto",
     '"Helvetica Neue"',
-    'Arial',
-    'sans-serif',
+    "Arial",
+    "sans-serif",
     '"Apple Color Emoji"',
     '"Segoe UI Emoji"',
     '"Segoe UI Symbol"',
-  ].join(','),
-  '&:hover': {
-    backgroundColor: '#0069d9',
-    borderColor: '#0062cc',
-    boxShadow: 'none',
+  ].join(","),
+  "&:hover": {
+    backgroundColor: "#0069d9",
+    borderColor: "#0062cc",
+    boxShadow: "none",
   },
-  '&:active': {
-    boxShadow: 'none',
-    backgroundColor: '#0062cc',
-    borderColor: '#005cbf',
+  "&:active": {
+    boxShadow: "none",
+    backgroundColor: "#0062cc",
+    borderColor: "#005cbf",
   },
-  '&:focus': {
-    boxShadow: '0 0 0 0.2rem rgba(0,123,255,.5)',
+  "&:focus": {
+    boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
   },
 });
 
 const theme = createTheme({
   palette: {
-      secondary: {
-          main: '#e1e1e1',
-      },
+    secondary: {
+      main: "#e1e1e1",
+    },
   },
 });
 
@@ -127,7 +129,6 @@ const headCells = [
     disablePadding: false,
     label: "Created At",
   },
-
 ];
 
 function EnhancedTableHead(props) {
@@ -165,8 +166,7 @@ function EnhancedTableHead(props) {
             </TableSortLabel>
           </TableCell>
         ))}
-        <TableCell>
-        </TableCell>
+        <TableCell></TableCell>
       </TableRow>
     </TableHead>
   );
@@ -182,7 +182,6 @@ EnhancedTableHead.propTypes = {
 };
 
 const EnhancedTableToolbar = () => {
-
   return (
     <Toolbar
       sx={{
@@ -190,39 +189,50 @@ const EnhancedTableToolbar = () => {
         pr: { xs: 1, sm: 1 },
       }}
     >
-      
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Admin
-        </Typography>
-
+      <Typography
+        sx={{ flex: "1 1 100%" }}
+        variant="h6"
+        id="tableTitle"
+        component="div"
+      >
+        Admin
+      </Typography>
     </Toolbar>
   );
 };
 
-
-export default function AdminTable({data}) {
+export default function AdminTable({ data }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState(data);
-  const [isOpenForm,setIsOpenForm]=React.useState(false);
-  const path=PATH.ADMIN_DETAIL.split(":id")[0];
+  const [isOpenForm, setIsOpenForm] = React.useState(false);
+  const path = PATH.ADMIN_DETAIL.split(":id")[0];
+  const [searchVal, setSearchValue] = React.useState("");
+  const navigate=useNavigate();
 
+  const handleClickSee=(id)=>{
+    console.log(id)
+    // navigate(path+id)
+  }
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
+  const AddAdmin = (row) => {
+    var newArray = [];
+    newArray.push(row);
 
- React.useEffect(()=>{
-   setRows(data);
- },[data])
+    for (var i = 0; i < rows.length; i++) {
+      newArray.push(rows[i]);
+    }
+    setRows(newArray);
+  };
+  React.useEffect(() => {
+    setRows(data);
+  }, [data]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -234,123 +244,182 @@ export default function AdminTable({data}) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  const requestSearch = (e) => {
+    const searchedVal = e.target.value;
+    setSearchValue(searchedVal);
+    // const filteredRows = data.filter((row) => {
+    //   return (
+    //     row.name.toLowerCase().includes(searchedVal.toLowerCase()) ||
+    //     row.email.toLowerCase().includes(searchedVal.toLowerCase())
+    //   );
+    // });
+    // setRows(filteredRows);
+  };
+  const handleRequestSearch = () => {
+    GetAdminList(searchVal).then((res) => {
+      if (res.status === 1) {
+        if (res.data.length !== 0) {
+          setRows(res.data);
+        }
+      }
+    });
+    // const filteredRows = data.filter((row) => {
+    //   return (
+    //     row.name.toLowerCase().includes(searchVal.toLowerCase()) ||
+    //     row.email.toLowerCase().includes(searchVal.toLowerCase())
+    //   );
+    // });
+    // setRows(filteredRows);
+  };
+  const searchKey = (e) => {
+    console.log(e.keyCode);
+    if (e.keyCode === 13) {
+      handleRequestSearch();
+      e.preventDefault();
+    }
+    // const filteredRows = data.filter((row) => {
+    //   return (
+    //     row.name.toLowerCase().includes(searchVal.toLowerCase()) ||
+    //     row.email.toLowerCase().includes(searchVal.toLowerCase())
+    //   );
+    // });
+    // setRows(filteredRows);
+  };
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-      const requestSearch = (e) => {
-    const searchedVal = e.target.value;
-
-    const filteredRows = data.filter((row) => {
-  
-      return (row.name.toLowerCase().includes(searchedVal.toLowerCase())||row.username.toLowerCase().includes(searchedVal.toLowerCase())||row.email.toLowerCase().includes(searchedVal.toLowerCase()));
-    });
-    setRows(filteredRows);
-  };
   return (
     <ThemeProvider theme={theme}>
-    <Box sx={{ width: "97%", p: 2,   backgroundColor: 'secondary.main', }}>
-      <Box sx={{display:"flex",justifyContent:"space-between"}}>
-      <Paper
-        component="form"
-        sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 400 }}
-      >
-        <InputBase
-          sx={{ ml: 1, flex: 1 }}
-          placeholder="Search"
-          onChange={(e) => requestSearch(e)}
-        />
-        <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-          <SearchIcon />
-        </IconButton>
-      </Paper>
-      <BootstrapButton variant="contained" sx={{my:1, mr:2}} onClick={handleClickAddAdmin}disableRipple>
-        Create
-      </BootstrapButton>
-      </Box>
-      <Box sx={{ width: "100%" }}>
-        <Paper sx={{ width: "96%", mb: 2, mt:2,px:3 }}>
-        <EnhancedTableToolbar/>
-          <TableContainer>
-            <Table
-              sx={{ minWidth: 750 }}
-              aria-labelledby="tableTitle"
-              size="medium"
+      <Box sx={{ width: "97%", p: 2, backgroundColor: "secondary.main" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Paper
+            component="form"
+            sx={{
+              p: "2px 4px",
+              display: "flex",
+              alignItems: "center",
+              width: 400,
+            }}
+          >
+            <InputBase
+              sx={{ ml: 1, flex: 1 }}
+              placeholder="Search"
+              onChange={(e) => requestSearch(e)}
+              onKeyDown={(e) => searchKey(e)}
+            />
+            <IconButton
+              sx={{ p: "10px" }}
+              aria-label="search"
+              onClick={handleRequestSearch}
             >
+              <SearchIcon />
+            </IconButton>
+          </Paper>
+          <BootstrapButton
+            variant="contained"
+            sx={{ my: 1, mr: 2 }}
+            onClick={handleClickAddAdmin}
+            disableRipple
+          >
+            Create
+          </BootstrapButton>
+        </Box>
+        <Box sx={{ width: "100%" }}>
+          <Paper sx={{ width: "96%", mb: 2, mt: 2, px: 3 }}>
+            <EnhancedTableToolbar />
+            <TableContainer>
+              <Table
+                sx={{ minWidth: 750 }}
+                aria-labelledby="tableTitle"
+                size="medium"
+              >
+                <EnhancedTableHead
+                  order={order}
+                  orderBy={orderBy}
+                  onRequestSort={handleRequestSort}
+                  rowCount={rows.length}
+                />
+                <TableBody>
+                  {stableSort(rows, getComparator(order, orderBy))
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      const labelId = `enhanced-table-checkbox-${index}`;
 
-              <EnhancedTableHead
-                order={order}
-                orderBy={orderBy}
-                onRequestSort={handleRequestSort}
-                rowCount={rows.length}
-              />
-              <TableBody>
-                {stableSort(rows, getComparator(order, orderBy))
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    const labelId = `enhanced-table-checkbox-${index}`;
-
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.name}
-                      >
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="none"
+                      return (
+                        <TableRow
+                          hover
+                          role="checkbox"
+                          tabIndex={-1}
+                          key={row.name}
                         >
-                         <Link to={path+row.id}  style={{ textDecoration: 'none' }}>
-                           <Box sx={{display:"flex"}}>
-                           <Avatar alt={row.username} src={rows.avatarUrl}/>
-                           <Typography sx={{py:1,ml:2}}>{row.username}</Typography>
-                           </Box>
-                           </Link> 
-                        </TableCell>
-                        <TableCell align="left">{row.name}</TableCell>
-                        <TableCell align="left">{row.email}</TableCell>
-                        <TableCell align="left">
-                          {convertUnixToTime(row.createdAt)}
+                          <TableCell
+                            component="th"
+                            id={labelId}
+                            scope="row"
+                            padding="none"
+                          >
+                            <Link
+                              to={path + row.id}
+                              style={{ textDecoration: "none" }}
+                            >
+                              <Box sx={{ display: "flex" }}>
+                                <Avatar
+                                  alt={row.username}
+                                  src={row.avatar}
+                                />
+                                <Typography sx={{ py: 1, ml: 2 }}>
+                                  {row.username}
+                                </Typography>
+                              </Box>
+                            </Link>
                           </TableCell>
-                        <TableCell align="left" sx={{display:"flex"}}>
-                           <IconButton aria-label="see">
-                             <VisibilityIcon/>
-                           </IconButton>
-
-                         </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                {emptyRows > 0 && (
-                  <TableRow
-                    style={{
-                      height: 33 * emptyRows,
-                    }}
-                  >
-                    <TableCell colSpan={6} />
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 50, 100]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
+                          <TableCell align="left">{row.name}</TableCell>
+                          <TableCell align="left">{row.email}</TableCell>
+                          <TableCell align="left">
+                            {convertUnixToTime(row.createdAt)}
+                          </TableCell>
+                          <TableCell align="left" sx={{ display: "flex" }} >
+                            <IconButton key={row.id} aria-label="see" onClick={(id)=>{
+                            navigate(path+row.id)
+                          }
+                            }>
+                              <VisibilityIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: 33 * emptyRows,
+                      }}
+                    >
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[10, 25, 50, 100]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Paper>
+        </Box>
       </Box>
-    </Box>
-    {isOpenForm?<AddForm closeForm={()=>setIsOpenForm(false)}/>:""}
+      {isOpenForm ? (
+        <AddForm AddAdmin={AddAdmin} closeForm={() => setIsOpenForm(false)} />
+      ) : (
+        ""
+      )}
     </ThemeProvider>
   );
 }

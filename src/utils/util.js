@@ -31,7 +31,7 @@ export const convertUnixToDateFormat = (unixTime) => {
   if (month.toString().length === 1) month = "0" + month;
   if (day.toString().length === 1) day = "0" + day;
   // Hours part from the timestamp
-  var hours = "0"+date.getHours();
+  var hours = date.getHours();
   // Minutes part from the timestamp
   var minutes = "0" + date.getMinutes();
   // Seconds part from the timestamp
@@ -49,4 +49,21 @@ export const splitPathToGetId = (path, match) => {
   str = str[0].split("/");
   str = str[0].split("#");
   return str[0];
+};
+export const validateEmail = (email) => {
+  let regex =
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  if (email.match(regex)) {
+    return true;
+  }
+  return false;
+};
+export const checkPhone = (phone) => {
+  if (phone === null || phone === undefined || phone === "") return true;
+  let regex = /^[0-9]{10}$/;
+  if (phone.match(regex)) {
+    return true;
+  }
+  return false;
 };
