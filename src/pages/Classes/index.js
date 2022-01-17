@@ -2,22 +2,23 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { MenuAdmin } from "../../components/Menu/MenuAdmin";
 import Nav from "../../components/Nav/Nav";
-import AdminTable from "./AdminTable/AdminTable";
-import { GetAdminList } from "../../apis/admin";
 import Loading from "../../components/Loading/Loading";
 import AlertTitle from "@mui/material/AlertTitle";
 import Alert from "@mui/material/Alert";
+import ClassTable from "./ClassTable/ClassTable";
+import { GetClassList } from "../../apis/class";
 
-export default function AdminPage() {
+export default function ClassPage() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
   // const [isEmpty,setIsEmpty]= React.useState(null);
   const [data, setData] = React.useState([]);
 
   React.useEffect(() => {
-    GetAdminList("")
+    GetClassList("")
       .then(async (res) => {
         if (res.status === 1) {
+          console.log(res.data);
           setData(res.data);
           setLoading(false);
         } else {
@@ -32,10 +33,10 @@ export default function AdminPage() {
   }, []);
   return (
     <Box sx={{ display: "flex", width: "100%" }}>
-      <MenuAdmin isAdmin={true} isClass={false} isUser={false} />
+      <MenuAdmin isAdmin={false} isClass={true} isUser={false} />
       <Box sx={{ width: "83%" }}>
         <Nav />
-        {loading ? <Loading /> : <AdminTable data={data} />}
+        {loading ? <Loading /> : <ClassTable data={data} />}
         {error ? (
           <Alert severity="error">
             <AlertTitle>Error</AlertTitle>

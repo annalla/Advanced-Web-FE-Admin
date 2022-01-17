@@ -6,6 +6,7 @@ export const PATH = {
   ADMIN_DETAIL:"/admins/:id",
   USER_MANAGE:"/users",
   USER_DETAIL:"/users/:id",
-  CLASS_DETAIL:"/classes",
-  CLASS_MANAGE:"/classes/:id",
+  CLASS_DETAIL:"/classes/:id",
+  CLASS_MANAGE:"/classes",
+  JOIN_CLASS_INVITATION:'/join?code=',
 }

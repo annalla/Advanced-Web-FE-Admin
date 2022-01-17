@@ -6,13 +6,10 @@ import {PATH} from "../constants/path";
 import Detail from "../pages/Admin/DetailPage/Detail";
 import DetailUser from "../pages/UserAccount/DetailPage";
 import UserPage from "../pages/UserAccount/index";
+import DetailedClassPage from "../pages/Classes/DetailedPage";
+import ClassPage from "../pages/Classes";
+
 const AdminPage = lazy(() => import("../pages/Admin/index"));
-// const UserPage = lazy(() => import("../pages/UserAccount/index"));
-
-
-// import CustomDrawer from "../pages/PageTest/Menu";
-
-
 
 const AuthRoutes = () => {
   return (
@@ -24,6 +21,8 @@ const AuthRoutes = () => {
         <Route exact path={PATH.ADMIN_DETAIL} element={<Detail />} />
         <Route exact path={PATH.USER_MANAGE} element={<UserPage />} />
         <Route exact path={PATH.USER_DETAIL} element={<DetailUser />} />
+        <Route exact path={PATH.CLASS_MANAGE} element={<ClassPage />} />
+        <Route exact path={PATH.CLASS_DETAIL} element={<DetailedClassPage />} />
 
       </Routes>
     </Suspense>
