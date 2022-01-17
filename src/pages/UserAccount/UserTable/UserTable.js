@@ -26,7 +26,6 @@ import Avatar from "@mui/material/Avatar";
 import { convertUnixToTime } from "../../../utils/util";
 import { PATH } from "../../../constants/path";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../../../constants/const";
 import { GetUserList } from "../../../apis/user";
 import LockIcon from "@mui/icons-material/Lock";
 import { BanUserById } from "../../../apis/user";
@@ -206,13 +205,6 @@ export default function UserTable({ data }) {
   const requestSearch = (e) => {
     const searchedVal = e.target.value;
     setSearchValue(searchedVal);
-    // const filteredRows = data.filter((row) => {
-    //   return (
-    //     row.name.toLowerCase().includes(searchedVal.toLowerCase()) ||
-    //     row.email.toLowerCase().includes(searchedVal.toLowerCase())
-    //   );
-    // });
-    // setRows(filteredRows);
   };
   const handleRequestSearch = () => {
     GetUserList(searchVal).then((res) => {
@@ -222,26 +214,12 @@ export default function UserTable({ data }) {
         }
       }
     });
-    // const filteredRows = data.filter((row) => {
-    //   return (
-    //     row.name.toLowerCase().includes(searchVal.toLowerCase()) ||
-    //     row.email.toLowerCase().includes(searchVal.toLowerCase())
-    //   );
-    // });
-    // setRows(filteredRows);
   };
   const searchKey = (e) => {
     if (e.keyCode === 13) {
       handleRequestSearch();
       e.preventDefault();
     }
-    // const filteredRows = data.filter((row) => {
-    //   return (
-    //     row.name.toLowerCase().includes(searchVal.toLowerCase()) ||
-    //     row.email.toLowerCase().includes(searchVal.toLowerCase())
-    //   );
-    // });
-    // setRows(filteredRows);
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -261,7 +239,7 @@ export default function UserTable({ data }) {
   return (
     <Fragment>
     <ThemeProvider theme={theme}>
-      <Box sx={{ width: "97%", p: 2, backgroundColor: "secondary.main" }}>
+      <Box sx={{ minHeight:600 ,width: "97%", p: 2, backgroundColor: "secondary.main" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Paper
             component="form"

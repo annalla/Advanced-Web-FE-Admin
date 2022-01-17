@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -13,12 +13,6 @@ import { validateEmail, checkPhone } from "../../../utils/util";
 import { FormHelperText } from "@mui/material";
 import { CreateAdmin } from "../../../apis/admin";
 import { ERROR_CODE } from "../../../constants/errorCode";
-// const Item = styled(Paper)(({ theme }) => ({
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   // textAlign: 'center',
-//   color: theme.palette.text.secondary,
-// }));
 
 const style = {
   position: "absolute",
@@ -37,7 +31,7 @@ export default function AddForm({ AddAdmin, closeForm }) {
   const [password, setPassword] = React.useState("");
   const [uploadFile, setUploadFile] = useState();
   const [preview, setPreview] = useState();
-  const [error,setError]=useState(null)
+  const [error, setError] = useState(null);
 
   const handleUploadFile = (e) => {
     if (!e.target.files || e.target.files.length === 0) {
@@ -84,17 +78,16 @@ export default function AddForm({ AddAdmin, closeForm }) {
     dataArray.append("avatar", uploadFile);
     console.log(dataArray);
     CreateAdmin(dataArray)
-    .then(async(res)=>{
-      if(res.status===1){
-        AddAdmin(res.data);
-        console.log(res.data);
-        closeForm();
-      }
-      else{
-        setError(ERROR_CODE[res.code])
-      }
-    }).catch((error)=>setError("Register failed"))
-
+      .then(async (res) => {
+        if (res.status === 1) {
+          AddAdmin(res.data);
+          console.log(res.data);
+          closeForm();
+        } else {
+          setError(ERROR_CODE[res.code]);
+        }
+      })
+      .catch((error) => setError("Register failed"));
   };
 
   const { ref, ...inputProps } = register("username", {
@@ -190,15 +183,7 @@ export default function AddForm({ AddAdmin, closeForm }) {
                         fullWidth
                         required
                       />
-                      {/* <TextField
-                        name="email"
-                        label="Email"
-                        // error={validateEmail}
-                        inputRef={register("email")}
-                        {...register("email")}
-                        fullWidth
-                        required
-                      /> */}
+
                       <TextField
                         name="phone"
                         label="Phone"
@@ -231,14 +216,25 @@ export default function AddForm({ AddAdmin, closeForm }) {
                             onChange={handleUploadFile}
                           />{" "}
                         </Button>
-                         <Grid item xs={12} sm={6}>
-                        {uploadFile && <img alt="avatarImage" id="previewImage" src={preview} width="150" height="150"/>}
+                        <Grid item xs={12} sm={6}>
+                          {uploadFile && (
+                            <img
+                              alt="avatarImage"
+                              id="previewImage"
+                              src={preview}
+                              width="150"
+                              height="150"
+                            />
+                          )}
+                        </Grid>
                       </Grid>
-                      </Grid>
-                     {error?<Grid container justifyContent="center">
-                        <FormHelperText error>{error}</FormHelperText>
-                      </Grid>:""}
-                      
+                      {error ? (
+                        <Grid container justifyContent="center">
+                          <FormHelperText error>{error}</FormHelperText>
+                        </Grid>
+                      ) : (
+                        ""
+                      )}
                     </Stack>
                   </Grid>
                 </Grid>
@@ -257,7 +253,6 @@ export default function AddForm({ AddAdmin, closeForm }) {
                     color="primary"
                     type="submit"
                     variant="outlined"
-                    // fullWidth
                   >
                     Register
                   </Button>

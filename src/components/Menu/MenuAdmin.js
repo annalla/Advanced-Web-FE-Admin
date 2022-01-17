@@ -32,9 +32,6 @@ const theme = createTheme({
       'sans-serif',
       'Geneva',
       'Verdana'
-      // '"Apple Color Emoji"',
-      // '"Segoe UI Emoji"',
-      // '"Segoe UI Symbol"',
     ].join(','),
   },
 });
@@ -53,7 +50,7 @@ export function MenuAdmin({isAdmin,isUser,isClass}) {
   const classes = useStyles();
   React.useEffect(()=>{
     navigate(path);
-  },[path])
+  },[path,navigate])
   return (
     <ThemeProvider theme={theme}>
     <Drawer

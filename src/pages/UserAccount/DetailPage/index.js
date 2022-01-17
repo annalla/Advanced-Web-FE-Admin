@@ -17,13 +17,6 @@ export default function DetailUser() {
   const [error, setError] = React.useState(null);
   const location = useLocation();
   const id = splitPathToGetId(location.pathname, "/users/");
-  const dataAccount = {
-    avatar: "",
-    email: "",
-    phone: "",
-    username: "",
-    name: "",
-  };
   const [data, setData] = useState({});
 
   useEffect(() => {

@@ -48,36 +48,36 @@ export default function DetailUserAccount({ data }) {
     setCode(e.target.value);
   };
   const handleChangeCodeClick = () => {
-    if(code.length!==0){
-      var dataCode={
-        userId:account.id,
-        studentCode:code,
-        isCodeLocked:true
+    if (code.length !== 0) {
+      var dataCode = {
+        userId: account.id,
+        studentCode: code,
+        isCodeLocked: true,
       };
       console.log(dataCode);
-      MapNewIdForUser(dataCode).then((res)=>{
-        console.log(res);
-        if(res.status===1){
-          setMessage("Map successfully");
-          account.code=res.data.code;
-          setAccount(account);
+      MapNewIdForUser(dataCode)
+        .then((res) => {
+          console.log(res);
+          if (res.status === 1) {
+            setMessage("Map successfully");
+            account.code = res.data.code;
+            setAccount(account);
+            setOpenSnackBar(true);
+            setIsEdit(false);
+          } else {
+            setMessage(ERROR_CODE[res.code]);
+            setOpenSnackBar(true);
+            setIsEdit(false);
+            setAccount(account);
+          }
+        })
+        .catch((error) => {
+          setMessage("Map failed");
           setOpenSnackBar(true);
           setIsEdit(false);
-        }
-        else{
-          setMessage(ERROR_CODE[res.code]);
-          setOpenSnackBar(true);
-          setIsEdit(false);
           setAccount(account);
-        }
-      }).catch((error)=>{
-        setMessage("Map failed");
-        setOpenSnackBar(true);
-        setIsEdit(false);
-        setAccount(account);
-      })
-    }
-    else{
+        });
+    } else {
       setMessage("Code empty");
       setOpenSnackBar(true);
       setAccount(account);
@@ -120,9 +120,7 @@ export default function DetailUserAccount({ data }) {
                 }
                 alt={account.name}
               />
-              {account.enabled ? (
-                ""
-              ) : (
+              {account.enabled===false ? (
                 <LockIcon
                   sx={{
                     position: "absolute",
@@ -132,6 +130,8 @@ export default function DetailUserAccount({ data }) {
                   }}
                   fontSize="large"
                 />
+              ) : (
+                ""
               )}
             </Card>
           </Paper>
@@ -177,10 +177,7 @@ export default function DetailUserAccount({ data }) {
                     </IconButton>
                   ) : (
                     <IconButton aria-label="edit" size="small" disabled>
-                      <SaveIcon
-                        fontSize="small"
-                        sx={{ color: indigo[900] }}
-                      />
+                      <SaveIcon fontSize="small" sx={{ color: indigo[900] }} />
                     </IconButton>
                   )}
                 </Box>
@@ -326,7 +323,14 @@ export default function DetailUserAccount({ data }) {
           </Paper>
         </Box>
       </ThemeProvider>
-      {openSnackBar ? <SimpleSnackbar message={message} onClose={()=>setOpenSnackBar(false)}/> : ""}
+      {openSnackBar ? (
+        <SimpleSnackbar
+          message={message}
+          onClose={() => setOpenSnackBar(false)}
+        />
+      ) : (
+        ""
+      )}
     </Fragment>
   );
 }

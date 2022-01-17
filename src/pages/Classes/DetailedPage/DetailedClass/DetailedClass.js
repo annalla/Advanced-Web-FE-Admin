@@ -35,7 +35,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{my:2}}>{children}</Box>}
+      {value === index && <Box sx={{ my: 2 }}>{children}</Box>}
     </div>
   );
 }
@@ -197,9 +197,8 @@ export default function DetailClass({ data }) {
               </Stack>
             </TabPanel>
             <TabPanel value={value} index={1}>
-              <ListPeople isTeacher={true} data={classInfo}/>
-              <ListPeople isTeacher={false} data={classInfo}/>
-
+              <ListPeople isTeacher={true} data={classInfo} />
+              <ListPeople isTeacher={false} data={classInfo} />
             </TabPanel>
           </Box>
         </Paper>

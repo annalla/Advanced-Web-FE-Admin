@@ -43,7 +43,7 @@ const BootstrapButton = styled(Button)({
     "-apple-system",
     "BlinkMacSystemFont",
     '"Segoe UI"',
-    "Roboto",
+    '"Roboto"',
     '"Helvetica Neue"',
     "Arial",
     "sans-serif",
@@ -210,9 +210,8 @@ export default function AdminTable({ data }) {
   const [isOpenForm, setIsOpenForm] = React.useState(false);
   const path = PATH.ADMIN_DETAIL.split(":id")[0];
   const [searchVal, setSearchValue] = React.useState("");
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
-  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -244,13 +243,6 @@ export default function AdminTable({ data }) {
   const requestSearch = (e) => {
     const searchedVal = e.target.value;
     setSearchValue(searchedVal);
-    // const filteredRows = data.filter((row) => {
-    //   return (
-    //     row.name.toLowerCase().includes(searchedVal.toLowerCase()) ||
-    //     row.email.toLowerCase().includes(searchedVal.toLowerCase())
-    //   );
-    // });
-    // setRows(filteredRows);
   };
   const handleRequestSearch = () => {
     GetAdminList(searchVal).then((res) => {
@@ -260,26 +252,12 @@ export default function AdminTable({ data }) {
         }
       }
     });
-    // const filteredRows = data.filter((row) => {
-    //   return (
-    //     row.name.toLowerCase().includes(searchVal.toLowerCase()) ||
-    //     row.email.toLowerCase().includes(searchVal.toLowerCase())
-    //   );
-    // });
-    // setRows(filteredRows);
   };
   const searchKey = (e) => {
     if (e.keyCode === 13) {
       handleRequestSearch();
       e.preventDefault();
     }
-    // const filteredRows = data.filter((row) => {
-    //   return (
-    //     row.name.toLowerCase().includes(searchVal.toLowerCase()) ||
-    //     row.email.toLowerCase().includes(searchVal.toLowerCase())
-    //   );
-    // });
-    // setRows(filteredRows);
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -288,7 +266,14 @@ export default function AdminTable({ data }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ width: "97%", p: 2, backgroundColor: "secondary.main" }}>
+      <Box
+        sx={{
+          minHeight: 600,
+          width: "97%",
+          p: 2,
+          backgroundColor: "secondary.main",
+        }}
+      >
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Paper
             component="form"
@@ -361,10 +346,7 @@ export default function AdminTable({ data }) {
                               style={{ textDecoration: "none" }}
                             >
                               <Box sx={{ display: "flex" }}>
-                                <Avatar
-                                  alt={row.username}
-                                  src={row.avatar}
-                                />
+                                <Avatar alt={row.username} src={row.avatar} />
                                 <Typography sx={{ py: 1, ml: 2 }}>
                                   {row.username}
                                 </Typography>
@@ -376,11 +358,14 @@ export default function AdminTable({ data }) {
                           <TableCell align="left">
                             {convertUnixToTime(row.createdAt)}
                           </TableCell>
-                          <TableCell align="left" sx={{ display: "flex" }} >
-                            <IconButton key={row.id} aria-label="see" onClick={(id)=>{
-                            navigate(path+row.id)
-                          }
-                            }>
+                          <TableCell align="left" sx={{ display: "flex" }}>
+                            <IconButton
+                              key={row.id}
+                              aria-label="see"
+                              onClick={(id) => {
+                                navigate(path + row.id);
+                              }}
+                            >
                               <VisibilityIcon />
                             </IconButton>
                           </TableCell>

@@ -1,6 +1,5 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-// import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,7 +13,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-// import Tooltip from "@mui/material/Tooltip";
 import { visuallyHidden } from "@mui/utils";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
@@ -25,7 +23,7 @@ import Avatar from "@mui/material/Avatar";
 import { convertUnixToTime } from "../../../utils/util";
 import { PATH } from "../../../constants/path";
 import { useNavigate } from "react-router-dom";
-import {SRC_IMG} from "../../../constants/const";
+import { SRC_IMG } from "../../../constants/const";
 import { GetClassList } from "../../../apis/class";
 
 const theme = createTheme({
@@ -213,7 +211,14 @@ export default function ClassTable({ data }) {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ width: "97%", p: 2, backgroundColor: "secondary.main" }}>
+      <Box
+        sx={{
+          minHeight: 600,
+          width: "97%",
+          p: 2,
+          backgroundColor: "secondary.main",
+        }}
+      >
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Paper
             component="form"
@@ -278,7 +283,15 @@ export default function ClassTable({ data }) {
                               style={{ textDecoration: "none" }}
                             >
                               <Box sx={{ display: "flex" }}>
-                                <Avatar variant="square" alt={row.name} src={row.coverImageUrl===""?SRC_IMG.COVER_IMAGE_CLASS:row.coverImageUrl} />
+                                <Avatar
+                                  variant="square"
+                                  alt={row.name}
+                                  src={
+                                    row.coverImageUrl === ""
+                                      ? SRC_IMG.COVER_IMAGE_CLASS
+                                      : row.coverImageUrl
+                                  }
+                                />
                                 <Typography sx={{ py: 1, ml: 2 }}>
                                   {row.name}
                                 </Typography>

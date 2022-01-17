@@ -8,16 +8,8 @@ import Card from "@mui/material/Card";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
 import { SRC_IMG } from "../../../../constants/const";
-import { convertUnixToDateFormat } from "../../../../utils/util";
 import { blue, red } from "@mui/material/colors";
 
-// import MenuItem from "@mui/material/MenuItem";
-// import FormControl from "@mui/material/FormControl";
-// import Select from "@mui/material/Select";
-// import DeleteIcon from "@mui/icons-material/Delete";
-// import EditIcon from "@mui/icons-material/Edit";
-// import IconButton from "@mui/material/IconButton";
-// import { indigo } from '@mui/material/colors';
 import { useState } from "react";
 
 const theme = createTheme({
@@ -33,11 +25,7 @@ export default function DetailAccount({ data }) {
   const [date, setDate] = useState(new Date());
   React.useEffect(() => {
     if (data.createdAt !== undefined) {
-      setDate(
-        new Date(data.createdAt*1000)
-          .toISOString()
-          .slice(0, 16)
-      );
+      setDate(new Date(data.createdAt * 1000).toISOString().slice(0, 16));
     }
     setAccount(data);
   }, [data]);
@@ -85,28 +73,6 @@ export default function DetailAccount({ data }) {
                 disabled
               />
             </Box>
-            {/* <Box sx={{ display: "flex", width: "100%" }}>
-              <Typography sx={{ p: 0.5, width: "20%" }}>Code</Typography>
-              <TextField
-                sx={{ width: "75%" }}
-                defaultValue=""
-                variant="standard"
-                disabled
-              /> */}
-            {/* <TextField
-                sx={{ width: "68%" }}
-                defaultValue=""
-                variant="standard"
-                disabled
-              />
-              
-              <IconButton aria-label="delete" size="small">
-                <DeleteIcon fontSize="small" color="error"/>
-              </IconButton>
-              <IconButton aria-label="edit" size="small">
-                <EditIcon fontSize="small" sx={{color:indigo[900]}} />
-              </IconButton> */}
-            {/* </Box>{" "} */}
             <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>Created At</Typography>
               <TextField
@@ -117,21 +83,7 @@ export default function DetailAccount({ data }) {
                 disabled
               />
             </Box>
-            {/* <Box sx={{ display: "flex", width: "100%" }}>
-              <Typography sx={{ p: 0.5, width: "20%" }}>Gender</Typography>
-              <FormControl
-                variant="standard"
-                fullWidth
-                disabled
-                sx={{ width: "75%" }}
-              >
-                <Select labelId="genderId" id="gender" label="Gender" value={0}>
-                  <MenuItem value={0}>None</MenuItem>
-                  <MenuItem value={1}>Male</MenuItem>
-                  <MenuItem value={2}>Female</MenuItem>
-                </Select>
-              </FormControl>
-            </Box> */}
+
             <Box sx={{ display: "flex", width: "100%" }}>
               <Typography sx={{ p: 0.5, width: "20%" }}>Phone</Typography>
               <TextField
@@ -189,17 +141,6 @@ export default function DetailAccount({ data }) {
                 </Box>
               )}
             </Box>
-            {/* <Box sx={{ display: "flex", width: "100%" }}>
-              <Typography sx={{ p: 0.5, width: "20%" }}>
-                Identity Card
-              </Typography>
-              <TextField
-                sx={{ width: "75%" }}
-                defaultValue=""
-                variant="standard"
-                disabled
-              />
-            </Box> */}
           </Stack>
         </Paper>
       </Box>
