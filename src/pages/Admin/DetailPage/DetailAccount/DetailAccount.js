@@ -34,7 +34,7 @@ export default function DetailAccount({ data }) {
   React.useEffect(() => {
     if (data.createdAt !== undefined) {
       setDate(
-        new Date(convertUnixToDateFormat(data.createdAt))
+        new Date(data.createdAt*1000)
           .toISOString()
           .slice(0, 16)
       );

@@ -19,14 +19,16 @@ export default function AdminPage() {
       .then(async (res) => {
         if (res.status === 1) {
           setData(res.data);
-          // console.log(res.data);
           setLoading(false);
         } else {
           setError("Some errors happen!");
+          setLoading(false);
+
         }
       })
-      .catch((error) => setError("Some errors happen!"));
-    setLoading(false);
+      .catch((error) => {setError("Some errors happen!");
+      setLoading(false);
+    });
   }, []);
   return (
     <Box sx={{ display: "flex", width: "100%" }}>

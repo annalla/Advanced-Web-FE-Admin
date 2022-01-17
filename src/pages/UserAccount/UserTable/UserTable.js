@@ -1,5 +1,6 @@
 import * as React from "react";
 import PropTypes from "prop-types";
+import { ERROR_CODE } from "../../../constants/errorCode";
 // import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
@@ -20,51 +21,17 @@ import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
-import AddForm from "../AddForm/AddForm";
 import Avatar from "@mui/material/Avatar";
 import { convertUnixToTime } from "../../../utils/util";
 import { PATH } from "../../../constants/path";
-import { GetAdminList } from "../../../apis/admin";
 import { useNavigate } from "react-router-dom";
-
-const BootstrapButton = styled(Button)({
-  boxShadow: "none",
-  textTransform: "none",
-  fontSize: 16,
-  padding: "6px 12px",
-  border: "1px solid",
-  lineHeight: 1.5,
-  backgroundColor: "#0063cc",
-  borderColor: "#0063cc",
-  fontFamily: [
-    "-apple-system",
-    "BlinkMacSystemFont",
-    '"Segoe UI"',
-    "Roboto",
-    '"Helvetica Neue"',
-    "Arial",
-    "sans-serif",
-    '"Apple Color Emoji"',
-    '"Segoe UI Emoji"',
-    '"Segoe UI Symbol"',
-  ].join(","),
-  "&:hover": {
-    backgroundColor: "#0069d9",
-    borderColor: "#0062cc",
-    boxShadow: "none",
-  },
-  "&:active": {
-    boxShadow: "none",
-    backgroundColor: "#0062cc",
-    borderColor: "#005cbf",
-  },
-  "&:focus": {
-    boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-  },
-});
+import { API_URL } from "../../../constants/const";
+import { GetUserList } from "../../../apis/user";
+import LockIcon from "@mui/icons-material/Lock";
+import { BanUserById } from "../../../apis/user";
+import SimpleSnackbar from "../../../components/SnackBar/SnackBar";
+import { Fragment } from "react";
 
 const theme = createTheme({
   palette: {
@@ -116,6 +83,12 @@ const headCells = [
     numeric: false,
     disablePadding: false,
     label: "Full Name",
+  },
+  {
+    id: "code",
+    numeric: false,
+    disablePadding: false,
+    label: "Code",
   },
   {
     id: "email",
@@ -195,47 +168,36 @@ const EnhancedTableToolbar = () => {
         id="tableTitle"
         component="div"
       >
-        Admin
+        User Accounts
       </Typography>
     </Toolbar>
   );
 };
 
-export default function AdminTable({ data }) {
+export default function UserTable({ data }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState(data);
-  const [isOpenForm, setIsOpenForm] = React.useState(false);
-  const path = PATH.ADMIN_DETAIL.split(":id")[0];
+  const path = PATH.USER_DETAIL.split(":id")[0];
   const [searchVal, setSearchValue] = React.useState("");
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const [openSnackBar,setOpenSnackBar]=React.useState(false);
+  const [message,setMessage]=React.useState(null);
 
-  
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  const AddAdmin = (row) => {
-    var newArray = [];
-    newArray.push(row);
 
-    for (var i = 0; i < rows.length; i++) {
-      newArray.push(rows[i]);
-    }
-    setRows(newArray);
-  };
   React.useEffect(() => {
     setRows(data);
   }, [data]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-  };
-  const handleClickAddAdmin = () => {
-    setIsOpenForm(true);
   };
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -253,7 +215,7 @@ export default function AdminTable({ data }) {
     // setRows(filteredRows);
   };
   const handleRequestSearch = () => {
-    GetAdminList(searchVal).then((res) => {
+    GetUserList(searchVal).then((res) => {
       if (res.status === 1) {
         if (res.data.length !== 0) {
           setRows(res.data);
@@ -286,7 +248,18 @@ export default function AdminTable({ data }) {
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
+    const setRowsById=(id)=>{
+     console.log(id);
+      rows.forEach(element => {
+        if(element.id===id){
+          element.enabled=false;
+        }
+        
+      });
+      setRows(rows);
+    }
   return (
+    <Fragment>
     <ThemeProvider theme={theme}>
       <Box sx={{ width: "97%", p: 2, backgroundColor: "secondary.main" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -313,14 +286,6 @@ export default function AdminTable({ data }) {
               <SearchIcon />
             </IconButton>
           </Paper>
-          <BootstrapButton
-            variant="contained"
-            sx={{ my: 1, mr: 2 }}
-            onClick={handleClickAddAdmin}
-            disableRipple
-          >
-            Create
-          </BootstrapButton>
         </Box>
         <Box sx={{ width: "100%" }}>
           <Paper sx={{ width: "96%", mb: 2, mt: 2, px: 3 }}>
@@ -361,10 +326,7 @@ export default function AdminTable({ data }) {
                               style={{ textDecoration: "none" }}
                             >
                               <Box sx={{ display: "flex" }}>
-                                <Avatar
-                                  alt={row.username}
-                                  src={row.avatar}
-                                />
+                                <Avatar alt={row.username} src={row.avatar} />
                                 <Typography sx={{ py: 1, ml: 2 }}>
                                   {row.username}
                                 </Typography>
@@ -372,17 +334,52 @@ export default function AdminTable({ data }) {
                             </Link>
                           </TableCell>
                           <TableCell align="left">{row.name}</TableCell>
+                          <TableCell align="left">{row.code}</TableCell>
                           <TableCell align="left">{row.email}</TableCell>
                           <TableCell align="left">
                             {convertUnixToTime(row.createdAt)}
                           </TableCell>
-                          <TableCell align="left" sx={{ display: "flex" }} >
-                            <IconButton key={row.id} aria-label="see" onClick={(id)=>{
-                            navigate(path+row.id)
-                          }
-                            }>
+                          <TableCell align="left" sx={{ display: "flex" }}>
+                            <IconButton
+                              key={row.id}
+                              aria-label="see"
+                              onClick={() => {
+                                navigate(path + row.id);
+                              }}
+                            >
                               <VisibilityIcon />
                             </IconButton>
+                            {row.enabled ===false? (
+                              <IconButton
+                              aria-label="lock"
+                              disabled
+                            >
+                              <LockIcon />
+                            </IconButton>
+                            ) : (
+                              <IconButton
+                                aria-label="lock"
+                                onClick={() => {
+                                  BanUserById(row.id).then((res)=>{
+                                    console.log(res)
+                                    if(res.status===1){
+                                      setRowsById(res.data.id);
+                                      setMessage("Banned successfully")
+                                      setOpenSnackBar(true);
+                                    }
+                                    else{
+                                      setMessage(ERROR_CODE[res.code]);
+                                      setOpenSnackBar(true);
+                                    }
+                                  }).catch(()=>{
+                                    setMessage("Banned failed");
+                                    setOpenSnackBar(true);}
+                                  );
+                                }}
+                              >
+                                <LockIcon />
+                              </IconButton>
+                            )}
                           </TableCell>
                         </TableRow>
                       );
@@ -411,11 +408,9 @@ export default function AdminTable({ data }) {
           </Paper>
         </Box>
       </Box>
-      {isOpenForm ? (
-        <AddForm AddAdmin={AddAdmin} closeForm={() => setIsOpenForm(false)} />
-      ) : (
-        ""
-      )}
     </ThemeProvider>
+    {openSnackBar?<SimpleSnackbar message={message} onClose={()=>setOpenSnackBar(false)}/>:""}
+    </Fragment>
+
   );
 }

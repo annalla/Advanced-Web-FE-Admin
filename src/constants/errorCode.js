@@ -1,7 +1,7 @@
 export const ERROR_CODE = {
 
     //general
-    BAD_REQUEST:"Wrong user",
+    BAD_REQUEST:"Error",
     // Login
     WRONG_PASSWORD: "Wrong password!",
     EMPTY_PASSWORD: "Empty password!",
@@ -25,5 +25,6 @@ export const ERROR_CODE = {
 	PHONE_INVALID:"Invalid Phone",
 	PHONE_EXISTED:"Phone existed",
 	EMAIL_EXISTED: "Email existed",
-	EMPTY_EMAIL:"Empty email"
+	EMPTY_EMAIL:"Empty email",
+    USER_ID_NOT_EXISTED:"User doesn't exist"
 }
