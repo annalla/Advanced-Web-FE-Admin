@@ -38,7 +38,6 @@ const Login = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const payload = { username, password }; 
-    // console.log("here");
     console.log(payload);
     loginAdmin(payload)
     .then(async(res)=>{
