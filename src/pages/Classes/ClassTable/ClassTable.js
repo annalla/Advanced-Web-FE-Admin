@@ -270,7 +270,7 @@ export default function ClassTable({ data }) {
                           hover
                           role="checkbox"
                           tabIndex={-1}
-                          key={row.name}
+                          key={row.id}
                         >
                           <TableCell
                             component="th"

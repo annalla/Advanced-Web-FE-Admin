@@ -1,6 +1,5 @@
 import * as React from "react";
 import PropTypes from "prop-types";
-// import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -14,57 +13,18 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
-// import Tooltip from "@mui/material/Tooltip";
 import { visuallyHidden } from "@mui/utils";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
-import AddForm from "../AddForm/AddForm";
 import Avatar from "@mui/material/Avatar";
 import { convertUnixToTime } from "../../../utils/util";
 import { PATH } from "../../../constants/path";
-import { GetAdminList } from "../../../apis/admin";
 import { useNavigate } from "react-router-dom";
-
-const BootstrapButton = styled(Button)({
-  boxShadow: "none",
-  textTransform: "none",
-  fontSize: 16,
-  padding: "6px 12px",
-  border: "1px solid",
-  lineHeight: 1.5,
-  backgroundColor: "#0063cc",
-  borderColor: "#0063cc",
-  fontFamily: [
-    "-apple-system",
-    "BlinkMacSystemFont",
-    '"Segoe UI"',
-    '"Roboto"',
-    '"Helvetica Neue"',
-    "Arial",
-    "sans-serif",
-    '"Apple Color Emoji"',
-    '"Segoe UI Emoji"',
-    '"Segoe UI Symbol"',
-  ].join(","),
-  "&:hover": {
-    backgroundColor: "#0069d9",
-    borderColor: "#0062cc",
-    boxShadow: "none",
-  },
-  "&:active": {
-    boxShadow: "none",
-    backgroundColor: "#0062cc",
-    borderColor: "#005cbf",
-  },
-  "&:focus": {
-    boxShadow: "0 0 0 0.2rem rgba(0,123,255,.5)",
-  },
-});
+import { SRC_IMG } from "../../../constants/const";
+import { GetClassList } from "../../../apis/class";
 
 const theme = createTheme({
   palette: {
@@ -106,22 +66,22 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: "username",
-    numeric: false,
-    disablePadding: true,
-    label: "Username",
-  },
-  {
     id: "name",
     numeric: false,
-    disablePadding: false,
-    label: "Full Name",
+    disablePadding: true,
+    label: "Name",
   },
   {
-    id: "email",
+    id: "code",
     numeric: false,
     disablePadding: false,
-    label: "Email",
+    label: "Code",
+  },
+  {
+    id: "ownerName",
+    numeric: false,
+    disablePadding: false,
+    label: "Owner",
   },
   {
     id: "createdAt",
@@ -173,9 +133,7 @@ function EnhancedTableHead(props) {
 }
 
 EnhancedTableHead.propTypes = {
-  // numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
-  // onSelectAllClick: PropTypes.func.isRequired,
   order: PropTypes.oneOf(["asc", "desc"]).isRequired,
   orderBy: PropTypes.string.isRequired,
   rowCount: PropTypes.number.isRequired,
@@ -195,20 +153,19 @@ const EnhancedTableToolbar = () => {
         id="tableTitle"
         component="div"
       >
-        Admin Accounts
+        Classes
       </Typography>
     </Toolbar>
   );
 };
 
-export default function AdminTable({ data }) {
+export default function ClassTable({ data }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [rows, setRows] = React.useState(data);
-  const [isOpenForm, setIsOpenForm] = React.useState(false);
-  const path = PATH.ADMIN_DETAIL.split(":id")[0];
+  const path = PATH.CLASS_DETAIL.split(":id")[0];
   const [searchVal, setSearchValue] = React.useState("");
   const navigate = useNavigate();
 
@@ -217,24 +174,12 @@ export default function AdminTable({ data }) {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  const AddAdmin = (row) => {
-    var newArray = [];
-    newArray.push(row);
-
-    for (var i = 0; i < rows.length; i++) {
-      newArray.push(rows[i]);
-    }
-    setRows(newArray);
-  };
   React.useEffect(() => {
     setRows(data);
   }, [data]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-  };
-  const handleClickAddAdmin = () => {
-    setIsOpenForm(true);
   };
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -245,7 +190,7 @@ export default function AdminTable({ data }) {
     setSearchValue(searchedVal);
   };
   const handleRequestSearch = () => {
-    GetAdminList(searchVal).then((res) => {
+    GetClassList(searchVal).then((res) => {
       if (res.status === 1) {
         if (res.data.length !== 0) {
           setRows(res.data);
@@ -298,14 +243,6 @@ export default function AdminTable({ data }) {
               <SearchIcon />
             </IconButton>
           </Paper>
-          <BootstrapButton
-            variant="contained"
-            sx={{ my: 1, mr: 2 }}
-            onClick={handleClickAddAdmin}
-            disableRipple
-          >
-            Create
-          </BootstrapButton>
         </Box>
         <Box sx={{ width: "100%" }}>
           <Paper sx={{ width: "96%", mb: 2, mt: 2, px: 3 }}>
@@ -333,7 +270,7 @@ export default function AdminTable({ data }) {
                           hover
                           role="checkbox"
                           tabIndex={-1}
-                          key={row.id}
+                          key={row.name}
                         >
                           <TableCell
                             component="th"
@@ -346,15 +283,23 @@ export default function AdminTable({ data }) {
                               style={{ textDecoration: "none" }}
                             >
                               <Box sx={{ display: "flex" }}>
-                                <Avatar alt={row.username} src={row.avatar} />
+                                <Avatar
+                                  variant="square"
+                                  alt={row.name}
+                                  src={
+                                    row.coverImageUrl === ""
+                                      ? SRC_IMG.COVER_IMAGE_CLASS
+                                      : row.coverImageUrl
+                                  }
+                                />
                                 <Typography sx={{ py: 1, ml: 2 }}>
-                                  {row.username}
+                                  {row.name}
                                 </Typography>
                               </Box>
                             </Link>
                           </TableCell>
-                          <TableCell align="left">{row.name}</TableCell>
-                          <TableCell align="left">{row.email}</TableCell>
+                          <TableCell align="left">{row.code}</TableCell>
+                          <TableCell align="left">{row.ownerName}</TableCell>
                           <TableCell align="left">
                             {convertUnixToTime(row.createdAt)}
                           </TableCell>
@@ -396,11 +341,6 @@ export default function AdminTable({ data }) {
           </Paper>
         </Box>
       </Box>
-      {isOpenForm ? (
-        <AddForm AddAdmin={AddAdmin} closeForm={() => setIsOpenForm(false)} />
-      ) : (
-        ""
-      )}
     </ThemeProvider>
   );
 }
