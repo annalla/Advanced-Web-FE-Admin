@@ -298,8 +298,8 @@ export default function ClassTable({ data }) {
                               </Box>
                             </Link>
                           </TableCell>
-                          <TableCell align="left">{row.ownerName}</TableCell>
                           <TableCell align="left">{row.code}</TableCell>
+                          <TableCell align="left">{row.ownerName}</TableCell>
                           <TableCell align="left">
                             {convertUnixToTime(row.createdAt)}
                           </TableCell>

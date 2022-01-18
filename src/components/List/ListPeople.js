@@ -19,18 +19,7 @@ const theme = createTheme({
     secondary: {
       main: "#f44336",
     },
-  },
-  typography: {
-    fontFamily: [
-      "Lucida Sans",
-      "Lucida Sans Regular",
-      "Lucida Grande",
-      "Lucida Sans Unicode",
-      "Geneva",
-      "Verdana",
-      "sans-serif",
-    ].join(","),
-  },
+  }
 });
 
 export default function ListPeople({ data, isTeacher}) {
