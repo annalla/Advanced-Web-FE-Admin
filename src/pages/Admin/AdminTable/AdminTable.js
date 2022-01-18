@@ -268,7 +268,7 @@ export default function AdminTable({ data }) {
     <ThemeProvider theme={theme}>
       <Box
         sx={{
-          minHeight: 600,
+          minHeight: 700,
           width: "97%",
           p: 2,
           backgroundColor: "secondary.main",

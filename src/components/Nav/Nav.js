@@ -33,11 +33,7 @@ const Nav = () => {
   return (
     <React.Fragment>
       <Container>
-        <Toolbar>
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}></Box>
-
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}></Box>
-
+        <Toolbar sx={{display:"flex", flexDirection:"row-reverse"}}>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

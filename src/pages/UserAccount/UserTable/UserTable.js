@@ -239,7 +239,7 @@ export default function UserTable({ data }) {
   return (
     <Fragment>
     <ThemeProvider theme={theme}>
-      <Box sx={{ minHeight:600 ,width: "97%", p: 2, backgroundColor: "secondary.main" }}>
+      <Box sx={{ minHeight:700 ,width: "97%", p: 2, backgroundColor: "secondary.main" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Paper
             component="form"
